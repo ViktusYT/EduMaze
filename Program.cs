@@ -10,6 +10,7 @@ namespace EduMaze {
             Game thegame = new Game (ref maze);
 
             while (thegame.running) {
+                thegame.processEvents ();
                 thegame.update ();
                 thegame.render ();
             }

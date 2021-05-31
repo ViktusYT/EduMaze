@@ -9,20 +9,39 @@ namespace EduMaze {
 
         private Maze theMaze;
         private RenderWindow gameWindow;
-        //private Event ev;
-
         private void initVariables () {
 
         }
+
         private void initWindow () {
+
             gameWindow = new RenderWindow (new VideoMode (800, 600), "EduMaze");
             gameWindow.SetFramerateLimit (60);
             gameWindow.SetVerticalSyncEnabled (true);
+
+            gameWindow.KeyPressed += new EventHandler <KeyEventArgs> (keyPressedHandler);
+            gameWindow.Closed += new EventHandler (closeEventHandler);
         }
+
         private void initObjects () {
 
         }
 
+        private void closeEventHandler (object sender, EventArgs e) {
+            gameWindow.Close();
+        }
+
+        private void keyPressedHandler (object sender, KeyEventArgs e) {
+            switch (e.Code) {
+                case Keyboard.Key.Escape: 
+                                            gameWindow.Close();
+                                            break;
+            }
+        }
+
+        public void processEvents () {
+            gameWindow.DispatchEvents();
+        }
 
         public Boolean running {
             get => gameWindow.IsOpen;
