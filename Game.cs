@@ -6,32 +6,31 @@ using SFML.Graphics;
 
 namespace EduMaze {
     class Game {
-
         private Maze theMaze;
         private RenderWindow gameWindow;
-        private void initVariables () {
+        private void InitVariables () {
 
         }
 
-        private void initWindow () {
+        private void InitWindow () {
 
             gameWindow = new RenderWindow (new VideoMode (800, 600), "EduMaze");
             gameWindow.SetFramerateLimit (60);
             gameWindow.SetVerticalSyncEnabled (true);
 
-            gameWindow.KeyPressed += new EventHandler <KeyEventArgs> (keyPressedHandler);
-            gameWindow.Closed += new EventHandler (closeEventHandler);
+            gameWindow.KeyPressed += new EventHandler <KeyEventArgs> (KeyPressedHandler);
+            gameWindow.Closed += new EventHandler (CloseEventHandler);
         }
 
-        private void initObjects () {
+        private void InitObjects () {
 
         }
 
-        private void closeEventHandler (object sender, EventArgs e) {
+        private void CloseEventHandler (object sender, EventArgs e) {
             gameWindow.Close();
         }
 
-        private void keyPressedHandler (object sender, KeyEventArgs e) {
+        private void KeyPressedHandler (object sender, KeyEventArgs e) {
             switch (e.Code) {
                 case Keyboard.Key.Escape: 
                                             gameWindow.Close();
@@ -39,7 +38,7 @@ namespace EduMaze {
             }
         }
 
-        public void processEvents () {
+        public void ProcessEvents () {
             gameWindow.DispatchEvents();
         }
 
@@ -50,16 +49,16 @@ namespace EduMaze {
         public Game (ref Maze maze) {
             theMaze = maze;
             
-            initVariables ();
-            initWindow ();
-            initObjects ();
+            InitVariables ();
+            InitWindow ();
+            InitObjects ();
         }
 
-        public void update () {
+        public void Update () {
 
         }
 
-        public void render () {
+        public void Render () {
             //Console.WriteLine ("Jesteś w punkcie: " + theMaze.Position);
 
             /*int state = (int) theMaze.State;

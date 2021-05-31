@@ -1,5 +1,3 @@
-using System;
-
 namespace EduMaze {
     public enum Nd {
         MAZE_UP = 0x1,

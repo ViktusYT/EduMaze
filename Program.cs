@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EduMaze {
+﻿namespace EduMaze {
 
     class Program {
         static void Main(string[] args) {
@@ -10,9 +8,9 @@ namespace EduMaze {
             Game thegame = new Game (ref maze);
 
             while (thegame.running) {
-                thegame.processEvents ();
-                thegame.update ();
-                thegame.render ();
+                thegame.ProcessEvents ();
+                thegame.Update ();
+                thegame.Render ();
             }
         }
     }

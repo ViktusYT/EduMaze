@@ -30,7 +30,7 @@ namespace EduMaze {
             }
         }
 
-        private MazeNode[,] Nodes;
+        private MazeNode[,] nodes;
 
         private Tuple <int, int> position;
 
@@ -44,21 +44,21 @@ namespace EduMaze {
             this.width = width;
             this.height = height;
 
-            Nodes = new MazeNode [height, width];
+            nodes = new MazeNode [height, width];
             dfsStack = new Stack ();
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    Nodes [i, j] = new MazeNode (j, i);
+                    nodes [i, j] = new MazeNode (j, i);
                 }
             }
 
-            dfsStack.Push (Nodes [0, 0]);
-            Nodes[0, 0].State = Nd.MAZE_VISITED;
+            dfsStack.Push (nodes [0, 0]);
+            nodes[0, 0].State = Nd.MAZE_VISITED;
             position = new Tuple <int, int> (0, 0);
 
 
-            dfs();
+            Dfs();
         }
 
         public Tuple <int, int> Position {
@@ -70,18 +70,18 @@ namespace EduMaze {
         }
 
         public Nd State {
-            get => Nodes[position.Item2, position.Item1].State;
+            get => nodes [position.Item2, position.Item1].State;
         }
 
-        public void primitivePrint () {
+        public void PrimitivePrint () {
             for (int i = 0; i < this.height; i++) {
                 for (int j = 0; j < this.width; j++) {
-                    Console.WriteLine ("x: " + j.ToString() + ", y: " + i.ToString() + ", Wartość: " + (int)Nodes[i, j].State);
+                    Console.WriteLine ("x: " + j.ToString() + ", y: " + i.ToString() + ", Wartość: " + (int)nodes[i, j].State);
                 }
             }
         }
 
-        public void go (int direction) {
+        public void Go (int direction) {
             if ((((int)State >> direction) & 1) == 1) {
                 switch (direction) {
                     case 0: 
@@ -100,7 +100,7 @@ namespace EduMaze {
             }
         }
 
-        private void swap (ref Tuple <MazeNode, Nd> o1, ref Tuple <MazeNode, Nd> o2) {
+        private void Swap (ref Tuple <MazeNode, Nd> o1, ref Tuple <MazeNode, Nd> o2) {
             var temp = o1;
             o1 = o2;
             o2 = temp;
@@ -114,11 +114,11 @@ namespace EduMaze {
             {
                 n--;
                 int i = random.Next (n + 1);
-                swap (ref array[i], ref array[n]);
+                Swap (ref array[i], ref array[n]);
             }
         }
 
-        private Nd reversedND (Nd temp) {
+        private Nd ReversedNd (Nd temp) {
             switch (temp) {
                 case Nd.MAZE_UP: return Nd.MAZE_DOWN;
                 case Nd.MAZE_RIGHT: return Nd.MAZE_LEFT;
@@ -128,7 +128,7 @@ namespace EduMaze {
             }
         }
 
-        private void dfs() {
+        private void Dfs() {
             MazeNode temp = (MazeNode) dfsStack.Peek();
 
             Tuple <MazeNode, Nd>[] shuffle = new Tuple <MazeNode, Nd> [4];
@@ -136,13 +136,13 @@ namespace EduMaze {
             int n = 0;
 
             if (temp.Location.Item2 - 1 >= 0)
-                shuffle[n++] = new Tuple<MazeNode, Nd> (Nodes[temp.Location.Item2 - 1, temp.Location.Item1], Nd.MAZE_UP);
+                shuffle[n++] = new Tuple<MazeNode, Nd> (nodes[temp.Location.Item2 - 1, temp.Location.Item1], Nd.MAZE_UP);
             if (temp.Location.Item1 + 1 < this.width)
-                shuffle[n++] = new Tuple<MazeNode, Nd> (Nodes[temp.Location.Item2, temp.Location.Item1 + 1], Nd.MAZE_RIGHT);
+                shuffle[n++] = new Tuple<MazeNode, Nd> (nodes[temp.Location.Item2, temp.Location.Item1 + 1], Nd.MAZE_RIGHT);
             if (temp.Location.Item2 + 1 < this.height)
-                shuffle[n++] = new Tuple<MazeNode, Nd> (Nodes[temp.Location.Item2 + 1, temp.Location.Item1], Nd.MAZE_DOWN);
+                shuffle[n++] = new Tuple<MazeNode, Nd> (nodes[temp.Location.Item2 + 1, temp.Location.Item1], Nd.MAZE_DOWN);
             if (temp.Location.Item1 - 1 >= 0)
-                shuffle[n++] = new Tuple<MazeNode, Nd> (Nodes[temp.Location.Item2, temp.Location.Item1 - 1], Nd.MAZE_LEFT);
+                shuffle[n++] = new Tuple<MazeNode, Nd> (nodes[temp.Location.Item2, temp.Location.Item1 - 1], Nd.MAZE_LEFT);
             
             Shuffle (shuffle, n);
 
@@ -150,9 +150,9 @@ namespace EduMaze {
                 var element = shuffle[i];
                 if (!element.Item1.Visited) {
                     temp.State = element.Item2;
-                    element.Item1.State = reversedND (element.Item2) | Nd.MAZE_VISITED;
+                    element.Item1.State = ReversedNd (element.Item2) | Nd.MAZE_VISITED;
                     dfsStack.Push (element.Item1);
-                    dfs ();
+                    Dfs ();
                 }
             }
 
