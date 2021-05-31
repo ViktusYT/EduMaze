@@ -1,13 +1,25 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using SFML.Window;
+using SFML.Graphics;
+using SFML.System;
 
 namespace EduMaze {
-    class Maze {
+    class Maze : IDrawable {
         // Maze generator alghorithm!
-        private class MazeNode {
+        private class MazeNode : IDrawable {
 
             Nd state;
             Tuple <int, int> location;
+
+            private RectangleShape bodyTop;
+            private RectangleShape bodyRight;
+            private RectangleShape bodyBottom;
+            private RectangleShape bodyLeft;
+
+            private LinkedList<RectangleShape> black;
+            private LinkedList<RectangleShape> white;
 
             public Nd State {
                 get => state;
@@ -27,13 +39,74 @@ namespace EduMaze {
             public MazeNode (int x, int y) {
                 state = 0;
                 location = new Tuple <int, int> (x, y);
+
+                black = new LinkedList<RectangleShape>();
+                white = new LinkedList<RectangleShape>();
+
+                bodyTop = new RectangleShape (new Vector2f (20.0f, 2.0f));
+                bodyTop.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f);
+
+                bodyRight = new RectangleShape (new Vector2f (2.0f, 20.0f));
+                bodyRight.Position = new Vector2f ((float)location.Item1 * 20.0f + 18.0f, (float)location.Item2 * 20.0f);
+
+                bodyBottom = new RectangleShape (new Vector2f (20.0f, 2.0f));
+                bodyBottom.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f + 18.0f);
+
+                bodyLeft = new RectangleShape (new Vector2f (2.0f, 20.0f));
+                bodyLeft.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f);
             }
+
+            public void SetBorders () {
+
+                if ((State & Nd.MAZE_UP) > 0) {
+                    bodyTop.FillColor = Color.White;
+                    white.AddLast (bodyTop);
+                }
+                else { 
+                    bodyTop.FillColor = Color.Black;
+                    black.AddLast (bodyTop);
+                }
+
+                if ((State & Nd.MAZE_RIGHT) > 0) {
+                    bodyRight.FillColor = Color.White;
+                    white.AddLast (bodyRight);
+                }
+                else {
+                    bodyRight.FillColor = Color.Black;
+                    black.AddLast (bodyRight);
+                }
+                
+                if ((State & Nd.MAZE_DOWN) > 0) {
+                    bodyBottom.FillColor = Color.White;
+                    white.AddLast (bodyBottom);
+                }
+                else { 
+                    bodyBottom.FillColor = Color.Black;
+                    black.AddLast (bodyBottom);
+                }
+
+                if ((State & Nd.MAZE_LEFT) > 0) {
+                    bodyLeft.FillColor = Color.White;
+                    white.AddLast (bodyLeft);
+
+                }
+                else {
+                    bodyLeft.FillColor = Color.Black;
+                    black.AddLast (bodyLeft);
+                }
+            }
+
+            public void Draw (ref RenderWindow window) {
+                
+                foreach (var body in black) {
+                    window.Draw (body);
+                }
+            }
+
         }
 
         private MazeNode[,] nodes;
-
         private Tuple <int, int> position;
-
         private Stack dfsStack;
 
         private int width;
@@ -57,8 +130,13 @@ namespace EduMaze {
             nodes[0, 0].State = Nd.MAZE_VISITED;
             position = new Tuple <int, int> (0, 0);
 
-
             Dfs();
+
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    nodes [i, j].SetBorders ();
+                }
+            }
         }
 
         public Tuple <int, int> Position {
@@ -81,21 +159,30 @@ namespace EduMaze {
             }
         }
 
-        public void Go (int direction) {
-            if ((((int)State >> direction) & 1) == 1) {
+        public void Go (Nd direction) {
+
+            if (((int)State & (int)direction) > 0) {
                 switch (direction) {
-                    case 0: 
+                    case Nd.MAZE_UP: 
                         position = new Tuple <int, int> (position.Item1, position.Item2 - 1);
                         break;
-                    case 1:
+                    case Nd.MAZE_RIGHT:
                         position = new Tuple <int, int> (position.Item1 + 1, position.Item2);
                         break;
-                    case 2:
+                    case Nd.MAZE_DOWN:
                         position = new Tuple <int, int> (position.Item1, position.Item2 + 1);
                         break;
-                    case 3:
+                    case Nd.MAZE_LEFT:
                         position = new Tuple <int, int> (position.Item1 - 1, position.Item2);
                         break;
+                }
+            }
+        }
+
+        public void Draw (ref RenderWindow window) {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    nodes [i, j].Draw (ref window);
                 }
             }
         }

@@ -7,7 +7,9 @@ using SFML.Graphics;
 namespace EduMaze {
     class Game {
         private Maze theMaze;
+        private Player player;
         private RenderWindow gameWindow;
+
         private void InitVariables () {
 
         }
@@ -20,10 +22,16 @@ namespace EduMaze {
 
             gameWindow.KeyPressed += new EventHandler <KeyEventArgs> (KeyPressedHandler);
             gameWindow.Closed += new EventHandler (CloseEventHandler);
+            gameWindow.Resized += new EventHandler<SizeEventArgs> (ResizeEventHandler);
         }
 
         private void InitObjects () {
+            theMaze = new Maze (40, 20);
+            player = new Player (new Vector2f (theMaze.Position.Item1 + 3.0f, theMaze.Position.Item2 + 3.0f));
+        }
 
+        private void ResizeEventHandler (object sender, SizeEventArgs e) {
+            //gameWindow.Get = new Vector2u (e.Width, e.Height);
         }
 
         private void CloseEventHandler (object sender, EventArgs e) {
@@ -35,6 +43,19 @@ namespace EduMaze {
                 case Keyboard.Key.Escape: 
                                             gameWindow.Close();
                                             break;
+                case Keyboard.Key.W:
+                                            theMaze.Go(Nd.MAZE_UP);
+                                            break;
+                case Keyboard.Key.D:
+                                            theMaze.Go(Nd.MAZE_RIGHT);
+                                            break;
+                case Keyboard.Key.S:
+                                            theMaze.Go(Nd.MAZE_DOWN);
+                                            break;
+                case Keyboard.Key.A:
+                                            theMaze.Go(Nd.MAZE_LEFT);
+                                            break;
+
             }
         }
 
@@ -46,8 +67,7 @@ namespace EduMaze {
             get => gameWindow.IsOpen;
         }
 
-        public Game (ref Maze maze) {
-            theMaze = maze;
+        public Game () {
             
             InitVariables ();
             InitWindow ();
@@ -55,32 +75,14 @@ namespace EduMaze {
         }
 
         public void Update () {
-
+            player.UpdatePosition(new Vector2f (theMaze.Position.Item1 * 20.0f + 3.0f, theMaze.Position.Item2 * 20.0f + 3.0f));
         }
 
         public void Render () {
-            //Console.WriteLine ("Jesteś w punkcie: " + theMaze.Position);
-
-            /*int state = (int) theMaze.State;
-            Console.WriteLine ("Dostępne ścieżki: ");
-            if ((state & 1) == 1) Console.WriteLine ("1. W górę");
-            if (((state >> 1) & 1) == 1) Console.WriteLine ("2. W prawo");
-            if (((state >> 2) & 1) == 1) Console.WriteLine ("3. W dół");
-            if (((state >> 3) & 1) == 1) Console.WriteLine ("4. W lewo");
-
-            int direction = 0;
-            try {
-                String kierunek = Console.ReadLine();
-                direction = Int32.Parse(kierunek);
-            } catch (System.FormatException) {
-                ;
-            }
-
-            Console.WriteLine ("Odczytano: " + direction.ToString());
-
-            if (direction <= 4 && direction >= 0 && ((state >> (direction - 1)) & 1) == 1) theMaze.go (direction - 1);*/
 
             gameWindow.Clear (Color.White);
+            theMaze.Draw (ref gameWindow);
+            player.Draw (ref gameWindow);
             gameWindow.Display ();
         }
     }
