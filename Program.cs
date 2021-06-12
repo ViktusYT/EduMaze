@@ -6,7 +6,6 @@
             Game thegame = new Game ();
 
             while (thegame.running) {
-                thegame.ProcessEvents ();
                 thegame.Update ();
                 thegame.Render ();
             }

@@ -6,108 +6,128 @@ using SFML.Graphics;
 using SFML.System;
 
 namespace EduMaze {
+    class MazeNode : IDrawable {
+
+        Nd state;
+        Tuple <int, int> location;
+
+        private RectangleShape body;
+        private RectangleShape bodyTop;
+        private RectangleShape bodyRight;
+        private RectangleShape bodyBottom;
+        private RectangleShape bodyLeft;
+
+        private LinkedList<RectangleShape> black;
+        private LinkedList<RectangleShape> white;
+
+        private Texture questionTexture;
+
+        public Nd State {
+            get => state;
+            set {
+                state = state | value;
+            }
+        }
+
+        public Boolean Visited {
+            get => ((int) state >> 4) == 1;
+        }
+
+        public Tuple <int, int> Location {
+            get => location;
+        }
+
+        public MazeNode (int x, int y, ref Texture questionTexture) {
+
+            this.questionTexture = questionTexture;
+            state = 0;
+            location = new Tuple <int, int> (x, y);
+
+            black = new LinkedList<RectangleShape>();
+            white = new LinkedList<RectangleShape>();
+
+            body = new RectangleShape (new Vector2f (16.0f, 16.0f));
+            body.Position = new Vector2f ((float)location.Item1 * 20.0f + 2.0f, (float)location.Item2 * 20.0f + 2.0f);
+
+            bodyTop = new RectangleShape (new Vector2f (20.0f, 2.0f));
+            bodyTop.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f);
+
+            bodyRight = new RectangleShape (new Vector2f (2.0f, 20.0f));
+            bodyRight.Position = new Vector2f ((float)location.Item1 * 20.0f + 18.0f, (float)location.Item2 * 20.0f);
+
+            bodyBottom = new RectangleShape (new Vector2f (20.0f, 2.0f));
+            bodyBottom.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f + 18.0f);
+
+            bodyLeft = new RectangleShape (new Vector2f (2.0f, 20.0f));
+            bodyLeft.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f);
+        }
+
+        public void SetBorders () {
+
+            if ((State & Nd.MAZE_UP) > 0) {
+                bodyTop.FillColor = Color.White;
+                white.AddLast (bodyTop);
+            }
+            else { 
+                bodyTop.FillColor = Color.Black;
+                black.AddLast (bodyTop);
+            }
+
+            if ((State & Nd.MAZE_RIGHT) > 0) {
+                bodyRight.FillColor = Color.White;
+                white.AddLast (bodyRight);
+            }
+            else {
+                bodyRight.FillColor = Color.Black;
+                black.AddLast (bodyRight);
+            }
+                
+            if ((State & Nd.MAZE_DOWN) > 0) {
+                bodyBottom.FillColor = Color.White;
+                white.AddLast (bodyBottom);
+            }
+            else { 
+                bodyBottom.FillColor = Color.Black;
+                black.AddLast (bodyBottom);
+            }
+
+            if ((State & Nd.MAZE_LEFT) > 0) {
+                bodyLeft.FillColor = Color.White;
+                white.AddLast (bodyLeft);
+            }
+            else {
+                bodyLeft.FillColor = Color.Black;
+                black.AddLast (bodyLeft);
+            }
+
+            if ((State & Nd.MAZE_QUESTION) > 0) body.Texture = questionTexture;
+            else body.FillColor = Color.White;
+        }
+
+        public void Draw (ref RenderWindow window) {
+            
+            window.Draw (body);
+
+            foreach (var body in black) {
+                window.Draw (body);
+            }
+        }
+
+        public void unQuestion() {
+            state = (Nd)((int)state & 0xFFFFFFDF);
+            body = new RectangleShape (new Vector2f (16.0f, 16.0f));
+            body.Position = new Vector2f ((float)location.Item1 * 20.0f + 2.0f, (float)location.Item2 * 20.0f + 2.0f);
+            body.FillColor = Color.White;
+        }
+
+    }
     class Maze : IDrawable {
         // Maze generator alghorithm!
-        private class MazeNode : IDrawable {
-
-            Nd state;
-            Tuple <int, int> location;
-
-            private RectangleShape bodyTop;
-            private RectangleShape bodyRight;
-            private RectangleShape bodyBottom;
-            private RectangleShape bodyLeft;
-
-            private LinkedList<RectangleShape> black;
-            private LinkedList<RectangleShape> white;
-
-            public Nd State {
-                get => state;
-                set {
-                    state = state | value;
-                }
-            }
-
-            public Boolean Visited {
-                get => ((int) state >> 4) == 1;
-            }
-
-            public Tuple <int, int> Location {
-                get => location;
-            }
-
-            public MazeNode (int x, int y) {
-                state = 0;
-                location = new Tuple <int, int> (x, y);
-
-                black = new LinkedList<RectangleShape>();
-                white = new LinkedList<RectangleShape>();
-
-                bodyTop = new RectangleShape (new Vector2f (20.0f, 2.0f));
-                bodyTop.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f);
-
-                bodyRight = new RectangleShape (new Vector2f (2.0f, 20.0f));
-                bodyRight.Position = new Vector2f ((float)location.Item1 * 20.0f + 18.0f, (float)location.Item2 * 20.0f);
-
-                bodyBottom = new RectangleShape (new Vector2f (20.0f, 2.0f));
-                bodyBottom.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f + 18.0f);
-
-                bodyLeft = new RectangleShape (new Vector2f (2.0f, 20.0f));
-                bodyLeft.Position = new Vector2f ((float)location.Item1 * 20.0f, (float)location.Item2 * 20.0f);
-            }
-
-            public void SetBorders () {
-
-                if ((State & Nd.MAZE_UP) > 0) {
-                    bodyTop.FillColor = Color.White;
-                    white.AddLast (bodyTop);
-                }
-                else { 
-                    bodyTop.FillColor = Color.Black;
-                    black.AddLast (bodyTop);
-                }
-
-                if ((State & Nd.MAZE_RIGHT) > 0) {
-                    bodyRight.FillColor = Color.White;
-                    white.AddLast (bodyRight);
-                }
-                else {
-                    bodyRight.FillColor = Color.Black;
-                    black.AddLast (bodyRight);
-                }
-                
-                if ((State & Nd.MAZE_DOWN) > 0) {
-                    bodyBottom.FillColor = Color.White;
-                    white.AddLast (bodyBottom);
-                }
-                else { 
-                    bodyBottom.FillColor = Color.Black;
-                    black.AddLast (bodyBottom);
-                }
-
-                if ((State & Nd.MAZE_LEFT) > 0) {
-                    bodyLeft.FillColor = Color.White;
-                    white.AddLast (bodyLeft);
-
-                }
-                else {
-                    bodyLeft.FillColor = Color.Black;
-                    black.AddLast (bodyLeft);
-                }
-            }
-
-            public void Draw (ref RenderWindow window) {
-                
-                foreach (var body in black) {
-                    window.Draw (body);
-                }
-            }
-
-        }
 
         private MazeNode[,] nodes;
         private Tuple <int, int> position;
         private Stack dfsStack;
+        private Texture questionTexture;
 
         private int width;
         private int height;
@@ -119,10 +139,11 @@ namespace EduMaze {
 
             nodes = new MazeNode [height, width];
             dfsStack = new Stack ();
+            questionTexture = new Texture ("question.png");
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    nodes [i, j] = new MazeNode (j, i);
+                    nodes [i, j] = new MazeNode (j, i, ref questionTexture);
                 }
             }
 
@@ -130,13 +151,17 @@ namespace EduMaze {
             nodes[0, 0].State = Nd.MAZE_VISITED;
             position = new Tuple <int, int> (0, 0);
 
-            Dfs();
+            Dfs(80);
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
                     nodes [i, j].SetBorders ();
                 }
             }
+        }
+
+        public ref MazeNode GetNode(){
+            return ref nodes [position.Item2, position.Item1];
         }
 
         public Tuple <int, int> Position {
@@ -149,6 +174,14 @@ namespace EduMaze {
 
         public Nd State {
             get => nodes [position.Item2, position.Item1].State;
+        }
+
+        public Boolean Question {
+            get => (State & Nd.MAZE_QUESTION) > 0;
+            set {
+                if (value) nodes [position.Item2, position.Item1].State = Nd.MAZE_VISITED;
+                else nodes [position.Item2, position.Item1].unQuestion();
+            }
         }
 
         public void PrimitivePrint () {
@@ -215,8 +248,13 @@ namespace EduMaze {
             }
         }
 
-        private void Dfs() {
+        private void Dfs(int q) {
             MazeNode temp = (MazeNode) dfsStack.Peek();
+
+            if (q-- <= 0) {
+                temp.State = Nd.MAZE_QUESTION;
+                q = 80;
+            }
 
             Tuple <MazeNode, Nd>[] shuffle = new Tuple <MazeNode, Nd> [4];
 
@@ -239,7 +277,7 @@ namespace EduMaze {
                     temp.State = element.Item2;
                     element.Item1.State = ReversedNd (element.Item2) | Nd.MAZE_VISITED;
                     dfsStack.Push (element.Item1);
-                    Dfs ();
+                    Dfs (q--);
                 }
             }
 

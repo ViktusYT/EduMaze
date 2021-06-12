@@ -25,4 +25,19 @@ namespace EduMaze {
         }
 
     }
+
+    class Finish : IDrawable {
+        private RectangleShape body;
+
+        public Finish (Vector2f position) {
+
+            body = new RectangleShape (new Vector2f (14.0f, 14.0f));
+            body.FillColor = Color.Blue;
+            body.Position = position;
+        }
+
+        public void Draw (ref RenderWindow window) {
+            window.Draw (body);
+        }
+    }
 }

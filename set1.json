@@ -1,0 +1,22 @@
+[
+    {
+        "Question": "Pierwiastek z 9:",
+        "Answers": ["4", "9", "3"],
+        "Correct": 2
+    },
+    {
+        "Question": "4 + 4 / 2",
+        "Answers": ["6", "4", "1"],
+        "Correct": 0
+    },
+    {
+        "Question": "7 / 10 + 4",
+        "Answers": ["4,7", "0,5", "4"],
+        "Correct": 0
+    },
+    {
+        "Question": "Pochodna z x^2:",
+        "Answers": ["x^3", "2x", "x", "2*x^2"],
+        "Correct": 1
+    }
+]
