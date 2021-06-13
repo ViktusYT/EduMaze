@@ -10,7 +10,6 @@ namespace EduMaze {
 
         Nd state;
         Tuple <int, int> location;
-
         private RectangleShape body;
         private RectangleShape bodyTop;
         private RectangleShape bodyRight;
@@ -19,7 +18,6 @@ namespace EduMaze {
 
         private LinkedList<RectangleShape> black;
         private LinkedList<RectangleShape> white;
-
         private Texture questionTexture;
 
         public Nd State {
@@ -115,6 +113,7 @@ namespace EduMaze {
 
         public void unQuestion() {
             state = (Nd)((int)state & 0xFFFFFFDF);
+
             body = new RectangleShape (new Vector2f (16.0f, 16.0f));
             body.Position = new Vector2f ((float)location.Item1 * 20.0f + 2.0f, (float)location.Item2 * 20.0f + 2.0f);
             body.FillColor = Color.White;
@@ -131,6 +130,12 @@ namespace EduMaze {
 
         private int width;
         private int height;
+
+        public event EventHandler QuestionEntered;
+
+        protected virtual void SendQuestionEnteredSignal (EventArgs e) {
+            QuestionEntered?.Invoke(this, e);
+        }
 
         public Maze (int width, int height) {
 
@@ -151,7 +156,7 @@ namespace EduMaze {
             nodes[0, 0].State = Nd.MAZE_VISITED;
             position = new Tuple <int, int> (0, 0);
 
-            Dfs(80);
+            Dfs(30);
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
@@ -210,6 +215,8 @@ namespace EduMaze {
                         break;
                 }
             }
+
+            if ((State & Nd.MAZE_QUESTION) > 0) SendQuestionEnteredSignal (null);
         }
 
         public void Draw (ref RenderWindow window) {

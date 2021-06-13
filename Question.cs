@@ -1,11 +1,7 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
 
 using SFML.System;
 using SFML.Graphics;
-
-using Newtonsoft.Json;
 
 namespace EduMaze {
 
@@ -16,7 +12,7 @@ namespace EduMaze {
         private String answerString;
         private Font font;
         private bool signal;
-        public event EventHandler<String> Clicked;
+        public event EventHandler<int> Clicked;
         private int num;
         private int howManyQuestions;
 
@@ -62,20 +58,17 @@ namespace EduMaze {
         }
         public void OnClick () {
 
-            if (signal && (num < howManyQuestions)) {
+            if (signal && (num < howManyQuestions))
                 SendClickedSignal();
-            }
         }
         public void OnHover () {
 
-            if (signal && (num < howManyQuestions)) {
+            if (signal && (num < howManyQuestions))
                 body.FillColor = Color.Green;
-            }
         }
         public void OnUnhover () {
-            if (signal && (num < howManyQuestions)) {
+            if (signal && (num < howManyQuestions))
                 body.FillColor = Color.White;
-            }
         }
 
         public bool Contains (Vector2f coords) {
@@ -83,7 +76,7 @@ namespace EduMaze {
         }
 
         protected virtual void SendClickedSignal () {
-            Clicked?.Invoke(this, answerString);
+            Clicked?.Invoke(this, num);
         }
     }
     class Question : IDrawable { 
@@ -96,14 +89,10 @@ namespace EduMaze {
         private String [] answersString;
         private int correctAnswer;
         private int howManyQuestions;
-        private bool answered;
         private bool signal;
-
-        public bool Answered {
-            get => answered;
-            set {
-                answered = value;
-            }
+        public event EventHandler<bool> Answered;
+        protected virtual void SendAnsweredSignal (bool result) {
+            Answered?.Invoke(this, result);
         }
 
         public void SetSignal(bool sig) {
@@ -118,7 +107,6 @@ namespace EduMaze {
 
         public Question () {
             
-            answered = false;
             signal = false;
 
             answersButtons = new Button [4];
@@ -146,7 +134,6 @@ namespace EduMaze {
             this.answersString = answers;
             this.questionString = question;
 
-            answered = false;
             signal = false;
 
             questionText.DisplayedString = "Pytanie: " + question;
@@ -164,20 +151,14 @@ namespace EduMaze {
 
                 answersButtons[i].SetContent(answers[i], width, new Vector2f (body.Position.X + 30.0f + (float)i * (width + 30.0f), body.Position.Y + 130.0f), howManyQuestions);
             }
+
+            for (int i = howManyQuestions; i < 4; i++)
+                answersButtons[i].SetContent("", 0, new Vector2f (0.0f, 0.0f), howManyQuestions);
         }
 
-        private void ButtonHandler (object sender, String content) {
-            //Console.WriteLine(content);
+        private void ButtonHandler (object sender, int content) {
 
-            if (content == answersString[correctAnswer]) {
-                Console.WriteLine ("Poprawna odpowiedź");
-                answered = true;
-            }
-            else {
-                Console.WriteLine ("Zła odpowiedź");
-                answered = true;
-            }
-
+            SendAnsweredSignal(content == correctAnswer);
         }
         
         public void Draw (ref RenderWindow window) {
@@ -186,116 +167,6 @@ namespace EduMaze {
                 window.Draw(body);
                 window.Draw(questionText);
             }
-
-            //foreach (var i in answersButtons) i.Draw(ref window);
-
-            /*Console.WriteLine(questionString);
-
-            for (int i = 0; i < howManyQuestions; i++) {
-                Console.WriteLine ("{0}. {1}", i, answersString[i]);
-            }
-
-            int t = Int32.Parse (Console.ReadLine());
-
-            if (t == this.correctAnswer) {
-                Console.WriteLine ("Poprawna odpowiedź");
-                answered = true;
-            }
-            else {
-                Console.WriteLine ("Zła odpowiedź");
-                answered = true;
-            }*/
-        }
-    }
-    class QuestionSet {
-        Question question;
-        
-        List <QuestionPrototype> heap;
-        List <QuestionPrototype> questions;
-
-        private class QuestionPrototype {
-            public String Question { get; set; }
-            public String [] Answers { get; set; }
-            public int Correct { get; set; }
-        }
-
-        private void Parse (String questionFile) {
-            
-            questions = JsonConvert.DeserializeObject <List<QuestionPrototype>> (File.ReadAllText(questionFile));
-
-            /*foreach (var s in quest) {
-                Question temp = new Question (s.Question, s.Answers, s.Correct);
-                questions.Add(temp);
-            }*/
-        }
-        private void Shuffle(ref List <QuestionPrototype> list)
-        {
-            Random random = new Random();
-            int n = list.Count;
-
-            while (n > 1)
-            {
-                n--;
-                int i = random.Next (n + 1);
-                var temp = list[i];
-                list[i] = list[n];
-                list[n] = list[i];
-            }
-        }
-
-        public QuestionSet (String questionsFile) {
-
-            question = new Question();
-            
-            questions = new List<QuestionPrototype>();
-            heap = new List<QuestionPrototype>();
-
-            Parse (questionsFile);
-            Shuffle (ref questions);
-
-            question.SetContent (questions[0].Question, questions[0].Answers, questions[0].Correct);
-        }
-
-        public void QuestionSignal() {
-            question.SetSignal(true);
-        }
-
-        public void CheckQuestion(ref MazeNode node) {
-
-            if (question.Answered) {
-                node.unQuestion();
-                question.SetSignal(false);
-                NextQuestion();
-            }
-        }
-
-        public Question GetQuestion() {
-            return question;
-        }
-
-        public void NextQuestion () {
-
-            //Console.WriteLine ("Podaję następne pytanie: " + questions.Count);
-
-            QuestionPrototype temp;
-            
-            if (questions.Count == 1) {
-                
-                foreach (var i in heap) {
-                    questions.Add (i);
-                }
-
-                Shuffle (ref questions);
-                heap.Clear();
-            }
-            else {
-                temp = questions[0];
-                questions.Remove(temp);
-                heap.Add(temp);
-            }
-
-            temp = questions[0];
-            question.SetContent(temp.Question, temp.Answers, temp.Correct);
         }
     }
 }

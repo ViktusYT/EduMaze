@@ -55,16 +55,15 @@ namespace EduMaze {
         private Finish finish;
         private RenderWindow gameWindow;
         private QuestionSet questionSet;
+        private Question questionWindow;
         private List<Layer> layers;
         private Vector2i mousePositionWindow;
         private Vector2f mousePositionView;
         private ISelectable pointed;
-        private bool inQuestion;
 
         private void InitVariables () {
             layers = new List<Layer>();
             pointed = null;
-            inQuestion = false;
         }
 
         private void InitWindow () {
@@ -82,6 +81,8 @@ namespace EduMaze {
         private void InitObjects () {
 
             theMaze = new Maze (40, 20);
+            theMaze.QuestionEntered += QuestionEnteredHandler;
+
             layers.Add (new Layer (theMaze));
             player = new Player (new Vector2f (theMaze.Position.Item1 + 3.0f, theMaze.Position.Item2 + 3.0f));
             finish = new Finish (new Vector2f (39 * 20.0f + 3.0f, 19 * 20.0f + 3.0f));
@@ -89,9 +90,12 @@ namespace EduMaze {
             layers[1].AddObject(finish);
 
             questionSet = new QuestionSet ("set1.json");
+            questionWindow = new Question ();
 
-            layers.Add(new Layer (questionSet.GetQuestion()));
-            layers.Add(new Layer (questionSet.GetQuestion().GetButtons()));
+            questionWindow.Answered += QuestionAnsweredHandler;
+
+            layers.Add (new Layer (questionWindow));
+            layers.Add (new Layer (questionWindow.GetButtons()));
         }
 
         private void ResizeEventHandler (object sender, SizeEventArgs e) {
@@ -103,7 +107,7 @@ namespace EduMaze {
         }
 
         private void KeyPressedHandler (object sender, KeyEventArgs e) {
-            if (!inQuestion) {
+            if (!theMaze.Question) {
                 switch (e.Code) {
                     case Keyboard.Key.Escape: 
                                                 gameWindow.Close();
@@ -135,6 +139,21 @@ namespace EduMaze {
                                             if (pointed != null) pointed.OnClick();
                                             break;
             }
+        }
+
+        private void QuestionEnteredHandler (object sender, EventArgs e) {
+            QuestionPrototype temp = questionSet.GetQuestion();
+            questionWindow.SetContent (temp.Question, temp.Answers, temp.Correct);
+            questionWindow.SetSignal(true);
+        }
+
+        private void QuestionAnsweredHandler (object sender, bool result) {
+            if (result) Console.WriteLine ("Poprawna odpowiedź");
+            else Console.WriteLine ("Zła odpowiedź");
+
+            questionWindow.SetSignal(false);
+            questionSet.NextQuestion();
+            theMaze.GetNode().unQuestion();
         }
 
         public void ProcessEvents () {
@@ -172,15 +191,6 @@ namespace EduMaze {
             updateMousePosition();
             ProcessEvents();
             player.UpdatePosition(new Vector2f (theMaze.Position.Item1 * 20.0f + 3.0f, theMaze.Position.Item2 * 20.0f + 3.0f));
-
-            if (theMaze.Question) {
-                inQuestion = true;
-                questionSet.QuestionSignal();
-                questionSet.CheckQuestion(ref theMaze.GetNode());
-            }
-            else {
-                inQuestion = false;
-            }
         }
 
         private ISelectable GiveSelectable() {
