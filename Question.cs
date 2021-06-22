@@ -4,6 +4,10 @@ using SFML.System;
 using SFML.Graphics;
 
 namespace EduMaze {
+
+    class TooManyAnswersException : Exception {
+
+    }
     class Question : IDrawable { 
 
         private RectangleShape body;
@@ -17,7 +21,7 @@ namespace EduMaze {
         private int correctAnswer;
         private int howManyQuestions;
         private bool render;
-        public event EventHandler<bool> Answered;
+        public event EventHandler <bool> Answered;
         protected virtual void SendAnsweredSignal (bool result) {
             Answered?.Invoke(this, result);
         }
@@ -76,10 +80,8 @@ namespace EduMaze {
             }
 
             howManyQuestions = answers.GetLength(0);
-            if (howManyQuestions > 4) {
-                Console.WriteLine ("Too many answers to question: " + question);
-                // throw
-            }
+
+            if (howManyQuestions > 4) throw new TooManyAnswersException ();
             
             for (int i = 0; i < howManyQuestions; i++) {
                 
@@ -92,11 +94,11 @@ namespace EduMaze {
                     answersText[i].DisplayedString = WordWrap (letters[i].ToString() + ") " + answers[i], 520.0f, answersText[i].CharacterSize);
                 }
 
-                answersButtons[i].SetContent(letters[i].ToString().ToUpper(), width, new Vector2f (body.Position.X + 30.0f + (float)i * (width + 30.0f), body.Position.Y + 330.0f), howManyQuestions);
+                answersButtons[i].SetContent(letters[i].ToString().ToUpper(), width, new Vector2f (body.Position.X + 30.0f + (float)i * (width + 30.0f), body.Position.Y + 330.0f), howManyQuestions, correctAnswer);
             }
 
             for (int i = howManyQuestions; i < 4; i++)
-                answersButtons[i].SetContent("", 0, new Vector2f (0.0f, 0.0f), howManyQuestions);
+                answersButtons[i].SetContent("", 0, new Vector2f (0.0f, 0.0f), howManyQuestions, correctAnswer);
         }
 
         public void UnHoverButtons () {

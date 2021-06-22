@@ -60,8 +60,8 @@
         "Correct": 0
     },
     {
-        "Question": "Które zdanie jest prawdziwe?\n A) Im wyższa temperatura barwowa, tym chłodniejsza barwa światła.\nB) Im wyższa temperatura barwowa, tym cieplejsza barwa światła.",
-        "Answers": ["A", "B"],
+        "Question": "Które zdanie jest prawdziwe?",
+        "Answers": ["Im wyższa temperatura barwowa, tym chłodniejsza barwa światła.", "Im wyższa temperatura barwowa, tym cieplejsza barwa światła."],
         "Correct": 0
     },
     {

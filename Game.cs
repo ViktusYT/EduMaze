@@ -152,7 +152,12 @@ namespace EduMaze {
 
         private void QuestionEnteredHandler (object sender, EventArgs e) {
             QuestionPrototype temp = questionSet.GetQuestion();
-            questionWindow.SetContent (temp.Question, temp.Answers, temp.Correct);
+            try {
+                questionWindow.SetContent (temp.Question, temp.Answers, temp.Correct);
+            } catch (TooManyAnswersException) {
+                Console.WriteLine ("Too many answers to the question: {0}", temp.Question);
+                gameWindow.Close();
+            }
             questionWindow.Render = true;
         }
         
@@ -166,13 +171,14 @@ namespace EduMaze {
         }
 
         private void QuestionAnsweredHandler (object sender, bool result) {
+
             if (!result) player.takeOneLife();
-
+            
             questionWindow.Render = false;
-            questionWindow.UnHoverButtons();
-
             questionSet.NextQuestion();
             theMaze.Question = false;
+            
+            questionWindow.UnHoverButtons();
         }
 
         private void ProcessEvents () {
