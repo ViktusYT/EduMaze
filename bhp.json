@@ -1,0 +1,72 @@
+[
+    {
+        "Question": "Widzenie dzienne, w którym udział biorą przede wszystkim czopki, a ostry obraz powstaje w obszarze plamki żółtej to inaczej?",
+        "Answers": ["Widzenie mezopowe", "Widzenie fotopowe", "Widzenie skotopowe"],
+        "Correct": 1
+    },
+    {
+        "Question": "Jednostką luminancji jest:",
+        "Answers": ["Lumen", "Kandela", "Kandela / m^2", "Kandela / m^3"],
+        "Correct": 2
+    },
+    {
+        "Question": "Jaki wskaźnik jest najlepszy pod względem wykrywania zmian?",
+        "Answers": ["Ruchoma wskazówka", "Licznik - wskaźnik cyfrowy", "Ruchoma tarcza"],
+        "Correct": 0
+    },
+    {
+        "Question": "Przy zwiększeniu poziomu natężenia dźwięku o 3 dB, intensywność dźwięku...",
+        "Answers": ["Podwaja się", "Zwiększa się o 2", "Potraja się", "Zwiększa się o 3"],
+        "Correct": 0
+    },
+    {
+        "Question": "Jakie największe natężenie dźwięku jest dopuszczalne w odniesieniu do 8 - godzinnego dobowego wymiaru czasu pracy?",
+        "Answers": ["75 dB", "80 dB", "85 dB", "90 dB"],
+        "Correct": 2
+    },
+    {
+        "Question": "Którym zmysłem najlepiej ostrzec człowieka przed niebezpieczeństwem?",
+        "Answers": ["Smak", "Wzrok", "Dotyk", "Słuch"],
+        "Correct": 3
+    },
+    {
+        "Question": "Sygnały naturalne to:",
+        "Answers": ["Dźwięk dzwonka do drzwi", "Wizualne znaki dawane przez innych ludzi", "Zaświecenie się lampki-kontrolki"],
+        "Correct": 1
+    },
+    {
+        "Question": "Z jakiego elementu NIE składa się ludzkie ucho?",
+        "Answers": ["Błona bębenkowa", "Kostka bębenkowa", "Jama bębenkowa", "Kowadełko"],
+        "Correct": 1
+    },
+    {
+        "Question": "Odczucie słyszalnej częstotliwości dźwięku to:",
+        "Answers": ["Barwa dźwięku", "Wysokość dźwięku", "Natężenie dźwięku"],
+        "Correct": 1
+    },
+    {
+        "Question": "Słuch służy nam do:",
+        "Answers": ["komunikacji międzyludzkiej", "lokalizacji potencjalnie niebezpiecznych obiektów", "odbioru bodźców z odległych źródeł", "każda z powyższych odpowiedzi jest poprawna"],
+        "Correct": 3
+    },
+    {
+        "Question": "Zdolność do zmiany długości ogniskowej, a tym samym do nastawiania ostrości widzenia na różne odległości to:",
+        "Answers": ["Akomodacja", "Adaptacja", "Konwergencja"],
+        "Correct": 0
+    },
+    {
+        "Question": "Który rodzaj hałasu jest najbardziej szkodliwy dla człowieka?",
+        "Answers": ["Impulsywny", "Ustalony", "Niestalony"],
+        "Correct": 0
+    },
+    {
+        "Question": "Które zdanie jest prawdziwe?\n A) Im wyższa temperatura barwowa, tym chłodniejsza barwa światła.\nB) Im wyższa temperatura barwowa, tym cieplejsza barwa światła.",
+        "Answers": ["A", "B"],
+        "Correct": 0
+    },
+    {
+        "Question": "Jeśli soczewka oka się uwypukla (jest bardziej okrągła), to odległość ostrego widzenia:",
+        "Answers": ["Maleje", "Rośnie", "Nie zmienia się", "Brak danych"],
+        "Correct": 0
+    }
+]

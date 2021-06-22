@@ -15,7 +15,6 @@ namespace EduMaze {
         private RectangleShape bodyRight;
         private RectangleShape bodyBottom;
         private RectangleShape bodyLeft;
-
         private LinkedList<RectangleShape> black;
         private LinkedList<RectangleShape> white;
         private Texture questionTexture;
@@ -23,12 +22,12 @@ namespace EduMaze {
         public Nd State {
             get => state;
             set {
-                state = state | value;
+                state |= value;
             }
         }
 
         public Boolean Visited {
-            get => ((int) state >> 4) == 1;
+            get => (state & Nd.MAZE_VISITED) != 0;
         }
 
         public Tuple <int, int> Location {
@@ -111,7 +110,7 @@ namespace EduMaze {
             }
         }
 
-        public void unQuestion() {
+        public void UnQuestion() {
             state = (Nd)((int)state & 0xFFFFFFDF);
 
             body = new RectangleShape (new Vector2f (16.0f, 16.0f));
@@ -122,19 +121,21 @@ namespace EduMaze {
     }
     class Maze : IDrawable {
         // Maze generator alghorithm!
-
         private MazeNode[,] nodes;
         private Tuple <int, int> position;
-        private Stack dfsStack;
+        private Stack <MazeNode> dfsStack;
         private Texture questionTexture;
-
         private int width;
         private int height;
-
         public event EventHandler QuestionEntered;
+        public event EventHandler FinishEntered;
 
         protected virtual void SendQuestionEnteredSignal (EventArgs e) {
             QuestionEntered?.Invoke(this, e);
+        }
+
+        protected virtual void SendFinishEnteredSignal (EventArgs e) {
+            FinishEntered?.Invoke(this, e);
         }
 
         public Maze (int width, int height) {
@@ -143,7 +144,7 @@ namespace EduMaze {
             this.height = height;
 
             nodes = new MazeNode [height, width];
-            dfsStack = new Stack ();
+            dfsStack = new Stack <MazeNode> ();
             questionTexture = new Texture ("question.png");
 
             for (int i = 0; i < height; i++) {
@@ -152,10 +153,10 @@ namespace EduMaze {
                 }
             }
 
-            dfsStack.Push (nodes [0, 0]);
-            nodes[0, 0].State = Nd.MAZE_VISITED;
             position = new Tuple <int, int> (0, 0);
 
+            dfsStack.Push (nodes [0, 0]);
+            nodes[0, 0].State = Nd.MAZE_VISITED;
             Dfs(30);
 
             for (int i = 0; i < height; i++) {
@@ -184,16 +185,8 @@ namespace EduMaze {
         public Boolean Question {
             get => (State & Nd.MAZE_QUESTION) > 0;
             set {
-                if (value) nodes [position.Item2, position.Item1].State = Nd.MAZE_VISITED;
-                else nodes [position.Item2, position.Item1].unQuestion();
-            }
-        }
-
-        public void PrimitivePrint () {
-            for (int i = 0; i < this.height; i++) {
-                for (int j = 0; j < this.width; j++) {
-                    Console.WriteLine ("x: " + j.ToString() + ", y: " + i.ToString() + ", Wartość: " + (int)nodes[i, j].State);
-                }
+                if (value) nodes [position.Item2, position.Item1].State = Nd.MAZE_QUESTION;
+                else nodes [position.Item2, position.Item1].UnQuestion();
             }
         }
 
@@ -215,8 +208,9 @@ namespace EduMaze {
                         break;
                 }
             }
-
-            if ((State & Nd.MAZE_QUESTION) > 0) SendQuestionEnteredSignal (null);
+            
+            if (Position.Item1 == 39 && Position.Item2 == 19) SendFinishEnteredSignal (null);
+            else if ((State & Nd.MAZE_QUESTION) > 0) SendQuestionEnteredSignal (null);
         }
 
         public void Draw (ref RenderWindow window) {
@@ -224,24 +218,6 @@ namespace EduMaze {
                 for (int j = 0; j < width; j++) {
                     nodes [i, j].Draw (ref window);
                 }
-            }
-        }
-
-        private void Swap (ref Tuple <MazeNode, Nd> o1, ref Tuple <MazeNode, Nd> o2) {
-            var temp = o1;
-            o1 = o2;
-            o2 = temp;
-        }
-
-        private void Shuffle(Tuple <MazeNode, Nd> [] array, int n)
-        {
-            Random random = new Random();
-
-            while (n > 1)
-            {
-                n--;
-                int i = random.Next (n + 1);
-                Swap (ref array[i], ref array[n]);
             }
         }
 
@@ -255,12 +231,30 @@ namespace EduMaze {
             }
         }
 
-        private void Dfs(int q) {
-            MazeNode temp = (MazeNode) dfsStack.Peek();
+        private void Swap (ref Tuple <MazeNode, Nd> o1, ref Tuple <MazeNode, Nd> o2) {
+            var temp = o1;
+            o1 = o2;
+            o2 = temp;
+        }
+
+        private void Shuffle (Tuple <MazeNode, Nd> [] array, int n) {
+            Random random = new Random();
+
+            while (n > 1) {
+                n--;
+                int i = random.Next (n + 1);
+                Swap (ref array[i], ref array[n]);
+            }
+        }
+
+        private void Dfs (int q) {
+
+            MazeNode temp = dfsStack.Peek();
+            dfsStack.Pop ();
 
             if (q-- <= 0) {
                 temp.State = Nd.MAZE_QUESTION;
-                q = 80;
+                q = 30;
             }
 
             Tuple <MazeNode, Nd>[] shuffle = new Tuple <MazeNode, Nd> [4];
@@ -275,20 +269,20 @@ namespace EduMaze {
                 shuffle[n++] = new Tuple<MazeNode, Nd> (nodes[temp.Location.Item2 + 1, temp.Location.Item1], Nd.MAZE_DOWN);
             if (temp.Location.Item1 - 1 >= 0)
                 shuffle[n++] = new Tuple<MazeNode, Nd> (nodes[temp.Location.Item2, temp.Location.Item1 - 1], Nd.MAZE_LEFT);
-            
+                
             Shuffle (shuffle, n);
 
             for (int i = 0; i < n; i++) {
+
                 var element = shuffle[i];
+
                 if (!element.Item1.Visited) {
                     temp.State = element.Item2;
                     element.Item1.State = ReversedNd (element.Item2) | Nd.MAZE_VISITED;
                     dfsStack.Push (element.Item1);
-                    Dfs (q--);
+                    Dfs(q);
                 }
             }
-
-            dfsStack.Pop ();
         }
     }
 }

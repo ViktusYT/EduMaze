@@ -56,14 +56,17 @@ namespace EduMaze {
         private RenderWindow gameWindow;
         private QuestionSet questionSet;
         private Question questionWindow;
+        private EndWindow monit;
         private List<Layer> layers;
         private Vector2i mousePositionWindow;
         private Vector2f mousePositionView;
         private ISelectable pointed;
+        private bool movementBlocked;
 
         private void InitVariables () {
             layers = new List<Layer>();
             pointed = null;
+            movementBlocked = false;
         }
 
         private void InitWindow () {
@@ -78,28 +81,36 @@ namespace EduMaze {
             gameWindow.MouseButtonReleased += new EventHandler<MouseButtonEventArgs> (MouseButtonReleasedHandler);
         }
 
-        private void InitObjects () {
+        private void InitObjects (String quizFile) {
 
             theMaze = new Maze (40, 20);
             theMaze.QuestionEntered += QuestionEnteredHandler;
-
+            theMaze.FinishEntered += FinishEnteredHandler;
             layers.Add (new Layer (theMaze));
+
             player = new Player (new Vector2f (theMaze.Position.Item1 + 3.0f, theMaze.Position.Item2 + 3.0f));
-            finish = new Finish (new Vector2f (39 * 20.0f + 3.0f, 19 * 20.0f + 3.0f));
+            player.ZeroHealth += GameOverHandler;
             layers.Add (new Layer (player));
+
+            finish = new Finish (new Vector2f (39 * 20.0f + 3.0f, 19 * 20.0f + 3.0f));
             layers[1].AddObject(finish);
 
-            questionSet = new QuestionSet ("set1.json");
+            questionSet = new QuestionSet (quizFile);
+
             questionWindow = new Question ();
-
             questionWindow.Answered += QuestionAnsweredHandler;
-
             layers.Add (new Layer (questionWindow));
+
+            monit = new EndWindow ();
+            layers[2].AddObject(monit);
+
             layers.Add (new Layer (questionWindow.GetButtons()));
         }
 
         private void ResizeEventHandler (object sender, SizeEventArgs e) {
-            //gameWindow.Get = new Vector2u (e.Width, e.Height);
+
+            FloatRect visibleArea = new FloatRect (0.0f, 0.0f, e.Width, e.Height);
+            gameWindow.SetView(new View (visibleArea));
         }
 
         private void CloseEventHandler (object sender, EventArgs e) {
@@ -107,29 +118,27 @@ namespace EduMaze {
         }
 
         private void KeyPressedHandler (object sender, KeyEventArgs e) {
-            if (!theMaze.Question) {
-                switch (e.Code) {
-                    case Keyboard.Key.Escape: 
-                                                gameWindow.Close();
-                                                break;
-                    case Keyboard.Key.Up:
-                    case Keyboard.Key.W:
-                                                theMaze.Go(Nd.MAZE_UP);
-                                                break;
-                    case Keyboard.Key.Right:
-                    case Keyboard.Key.D:
-                                                theMaze.Go(Nd.MAZE_RIGHT);
-                                                break;
-                    case Keyboard.Key.Down:
-                    case Keyboard.Key.S:
-                                                theMaze.Go(Nd.MAZE_DOWN);
-                                                break;
-                    case Keyboard.Key.Left:
-                    case Keyboard.Key.A:
-                                                theMaze.Go(Nd.MAZE_LEFT);
-                                                break;
+            switch (e.Code) {
+                case Keyboard.Key.Escape: 
+                                            gameWindow.Close();
+                                            break;
+                case Keyboard.Key.Up:
+                case Keyboard.Key.W:
+                                            if (!movementBlocked) theMaze.Go(Nd.MAZE_UP);
+                                            break;
+                case Keyboard.Key.Right:
+                case Keyboard.Key.D:
+                                            if (!movementBlocked) theMaze.Go(Nd.MAZE_RIGHT);
+                                            break;
+                case Keyboard.Key.Down:
+                case Keyboard.Key.S:
+                                            if (!movementBlocked) theMaze.Go(Nd.MAZE_DOWN);
+                                            break;
+                case Keyboard.Key.Left:
+                case Keyboard.Key.A:
+                                            if (!movementBlocked) theMaze.Go(Nd.MAZE_LEFT);
+                                            break;
 
-                }
             }
         }
 
@@ -144,23 +153,33 @@ namespace EduMaze {
         private void QuestionEnteredHandler (object sender, EventArgs e) {
             QuestionPrototype temp = questionSet.GetQuestion();
             questionWindow.SetContent (temp.Question, temp.Answers, temp.Correct);
-            questionWindow.SetSignal(true);
+            questionWindow.Render = true;
+        }
+        
+        private void FinishEnteredHandler (object sender, EventArgs e) {
+            monit.SetContent(true);
+            monit.Render = true;
+        }
+        private void GameOverHandler (object sender, EventArgs e) {
+            monit.SetContent(false);
+            monit.Render = true;
         }
 
         private void QuestionAnsweredHandler (object sender, bool result) {
-            if (result) Console.WriteLine ("Poprawna odpowiedź");
-            else Console.WriteLine ("Zła odpowiedź");
+            if (!result) player.takeOneLife();
 
-            questionWindow.SetSignal(false);
+            questionWindow.Render = false;
+            questionWindow.UnHoverButtons();
+
             questionSet.NextQuestion();
-            theMaze.GetNode().unQuestion();
+            theMaze.Question = false;
         }
 
-        public void ProcessEvents () {
+        private void ProcessEvents () {
             gameWindow.DispatchEvents();
         }
 
-        private void updateMousePosition () {
+        private void UpdateMousePosition () {
             mousePositionWindow = Mouse.GetPosition(gameWindow);
             mousePositionView = gameWindow.MapPixelToCoords(mousePositionWindow);
 
@@ -180,17 +199,21 @@ namespace EduMaze {
             get => gameWindow.IsOpen;
         }
 
-        public Game () {
+        public Game (String quizFile) {
             
             InitVariables ();
             InitWindow ();
-            InitObjects ();
+            InitObjects (quizFile);
         }
 
         public void Update () {
-            updateMousePosition();
+
+            UpdateMousePosition();
             ProcessEvents();
             player.UpdatePosition(new Vector2f (theMaze.Position.Item1 * 20.0f + 3.0f, theMaze.Position.Item2 * 20.0f + 3.0f));
+
+            if (theMaze.Question || monit.Render) movementBlocked = true;
+            else movementBlocked = false;
         }
 
         private ISelectable GiveSelectable() {

@@ -17,7 +17,13 @@ namespace EduMaze {
         List <QuestionPrototype> questions;
 
         private void Parse (String questionFile) {
-            questions = JsonConvert.DeserializeObject <List<QuestionPrototype>> (File.ReadAllText(questionFile));
+            try {
+                questions = JsonConvert.DeserializeObject <List<QuestionPrototype>> (File.ReadAllText(questionFile));
+            } catch (FileNotFoundException e) {
+                using var reader = new StringReader(e.ToString());
+                Console.WriteLine ("Nie udało się odczytać pliku z pytaniami! Więcej informacji: " + reader.ReadLine());
+                System.Environment.Exit(1);
+            }
         }
         private void Shuffle(ref List <QuestionPrototype> list)
         {
@@ -62,9 +68,7 @@ namespace EduMaze {
             discarded.Add(questions[0]);
 
             try {
-
                 questions.RemoveAt(0);
-
             } catch (ArgumentOutOfRangeException e) {
                 Console.WriteLine("Za mało pytań! Więcej informacji: " + e.Message);
                 System.Environment.Exit(1);
