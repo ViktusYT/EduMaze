@@ -1,5 +1,7 @@
 # Projekt - EduMaze
 
+![screen](./docs/img1.png)
+
 Edu Maze to eukacyjna gra typu labirynt, w której gracz wybiera zestaw pytań, a następnie musi pokonać labirynt odpowiadając na pytania. Ilość błędyncyh odpowiedzi jest mocno ograniczona :).
 
 ## Technologia
