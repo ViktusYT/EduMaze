@@ -26,7 +26,7 @@ namespace EduMaze {
             body.OutlineColor = Color.Black;
             body.OutlineThickness = 3.0f;
             
-            font = new Font ("Roboto-Black.ttf");
+            font = new Font ("font/Roboto-Black.ttf");
 
             answerText = new Text ("Temp", font, 10);
             answerText.FillColor = Color.Black;

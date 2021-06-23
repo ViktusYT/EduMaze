@@ -21,12 +21,12 @@ namespace EduMaze {
         public Player (Vector2f position) {
 
             body = new RectangleShape (new Vector2f (14.0f, 14.0f));
-            texture = new Texture ("player.png");
+            texture = new Texture ("img/player.png");
             
             body.Texture = texture;
             body.Position = position;
 
-            font = new Font ("Roboto-Black.ttf");
+            font = new Font ("font/Roboto-Black.ttf");
 
             health = 3;
 
@@ -62,7 +62,7 @@ namespace EduMaze {
         public Finish (Vector2f position) {
 
             body = new RectangleShape (new Vector2f (14.0f, 14.0f));
-            texture = new Texture ("finish.png");
+            texture = new Texture ("img/finish.png");
 
             body.Texture = texture;
             body.Position = position;

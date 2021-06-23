@@ -145,7 +145,7 @@ namespace EduMaze {
 
             nodes = new MazeNode [height, width];
             dfsStack = new Stack <MazeNode> ();
-            questionTexture = new Texture ("question.png");
+            questionTexture = new Texture ("img/question.png");
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {

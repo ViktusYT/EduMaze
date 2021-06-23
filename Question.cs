@@ -43,7 +43,7 @@ namespace EduMaze {
             answersText = new Text [4];
             letters = new char [] {'a', 'b', 'c', 'd'};
 
-            questionFont = new Font ("Roboto-Black.ttf");
+            questionFont = new Font ("font/Roboto-Black.ttf");
 
             body = new RectangleShape (new Vector2f (600.0f, 400.0f));
             body.FillColor = Color.White;

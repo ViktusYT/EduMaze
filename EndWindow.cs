@@ -12,7 +12,7 @@ namespace EduMaze {
         public EndWindow () {
 
             Render = false;
-            font = new Font ("Roboto-Black.ttf");
+            font = new Font ("font/Roboto-Black.ttf");
 
             body = new RectangleShape (new Vector2f (400.0f, 200.0f));
             body.FillColor = Color.White;

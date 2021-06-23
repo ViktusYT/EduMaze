@@ -7,7 +7,7 @@ namespace EduMaze {
 
             String quizFile;
 
-            if (args.Length == 0) quizFile = "set1.json";
+            if (args.Length == 0) quizFile = "examples/set1.json";
             else quizFile = (String) args[0];
 
             Game thegame = new Game (quizFile);
