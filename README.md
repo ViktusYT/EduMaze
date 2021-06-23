@@ -1,6 +1,6 @@
 # Projekt - EduMaze
 
-Eud Maze to eukacyjna gra typu labirynt, w której gracz wybiera zestaw pytań, a następnie musi pokonać labirynt odpowiadając na pytania. Ilość błędyncyh odpowiedzi jest mocno ograniczona :).
+Edu Maze to eukacyjna gra typu labirynt, w której gracz wybiera zestaw pytań, a następnie musi pokonać labirynt odpowiadając na pytania. Ilość błędyncyh odpowiedzi jest mocno ograniczona :).
 
 ## Technologia
 
