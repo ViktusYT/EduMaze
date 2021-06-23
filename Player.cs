@@ -35,7 +35,7 @@ namespace EduMaze {
             healthText.FillColor = Color.Black;
         }
 
-        public void takeOneLife () {
+        public void TakeOneLife () {
             health--;
             healthText.DisplayedString = "Pozostało żyć: " + health.ToString();
 

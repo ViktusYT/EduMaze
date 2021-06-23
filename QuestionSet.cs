@@ -25,7 +25,7 @@ namespace EduMaze {
                 System.Environment.Exit(1);
             }
         }
-        private void Shuffle(ref List <QuestionPrototype> list)
+        private void Shuffle (ref List <QuestionPrototype> list)
         {
             Random random = new Random ();
 
@@ -37,17 +37,6 @@ namespace EduMaze {
                 list[k] = list[n];  
                 list[n] = value;  
             }
-        }
-        private void AnsweredHandler (object sender, bool c) {
-            NextQuestion();
-        }
-
-        override public String ToString () {
-            String temp = "";
-            foreach (var i in questions)
-                temp += i.Question + ", ";
-
-            return temp;
         }
 
         public QuestionSet (String questionsFile) {

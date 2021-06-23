@@ -94,11 +94,11 @@ namespace EduMaze {
                     answersText[i].DisplayedString = WordWrap (letters[i].ToString() + ") " + answers[i], 520.0f, answersText[i].CharacterSize);
                 }
 
-                answersButtons[i].SetContent(letters[i].ToString().ToUpper(), width, new Vector2f (body.Position.X + 30.0f + (float)i * (width + 30.0f), body.Position.Y + 330.0f), howManyQuestions, correctAnswer);
+                answersButtons[i].SetContent(letters[i].ToString().ToUpper(), width, new Vector2f (body.Position.X + 30.0f + (float)i * (width + 30.0f), body.Position.Y + 330.0f), howManyQuestions);
             }
 
             for (int i = howManyQuestions; i < 4; i++)
-                answersButtons[i].SetContent("", 0, new Vector2f (0.0f, 0.0f), howManyQuestions, correctAnswer);
+                answersButtons[i].SetContent("", 0, new Vector2f (0.0f, 0.0f), howManyQuestions);
         }
 
         public void UnHoverButtons () {

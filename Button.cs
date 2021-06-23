@@ -13,11 +13,9 @@ namespace EduMaze {
         public event EventHandler<int> Clicked;
         private int num;
         private int howManyQuestions;
-        private int correct;
 
         public Button (int num) {
 
-            this.correct = 0;
             this.num = num;
             this.howManyQuestions = 0;
         
@@ -34,9 +32,8 @@ namespace EduMaze {
             Render = false;
         }
 
-        public void SetContent (String str, float width, Vector2f position, int howManyQuestions, int correct) {
+        public void SetContent (String str, float width, Vector2f position, int howManyQuestions) {
             
-            this.correct = correct;
             Render = false;
             this.howManyQuestions = howManyQuestions;
 

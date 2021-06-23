@@ -172,7 +172,7 @@ namespace EduMaze {
 
         private void QuestionAnsweredHandler (object sender, bool result) {
 
-            if (!result) player.takeOneLife();
+            if (!result) player.TakeOneLife();
             
             questionWindow.Render = false;
             questionSet.NextQuestion();
@@ -201,7 +201,7 @@ namespace EduMaze {
             }
         }
 
-        public Boolean running {
+        public Boolean Running {
             get => gameWindow.IsOpen;
         }
 

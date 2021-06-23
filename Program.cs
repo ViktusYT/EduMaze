@@ -12,7 +12,7 @@ namespace EduMaze {
 
             Game thegame = new Game (quizFile);
 
-            while (thegame.running) {
+            while (thegame.Running) {
                 thegame.Update ();
                 thegame.Render ();
             }

@@ -11,12 +11,12 @@ Program został napisany w języku C# 9.0. Jako środowiska uruchomieniowego kor
 - [SFML.NET](https://www.nuget.org/packages/SFML.Net/)
 - [Newsoft Json.NET](https://www.nuget.org/packages/Newtonsoft.Json/)
 
-## Kompilacja
+## Kompilacja ze źródła i uruchamianie
 
 ### Windows
 
 1. Pobierz .NET SDK z [oficjalnej stony Microsoft](https://dotnet.microsoft.com/download)
-2. Korzystając z powłoki [PowerShell](https://docs.microsoft.com/pl-pl/powershell/) wejdź do folderu z kodem i wykonaj polecenie:
+2. Korzystając z powłoki [PowerShell](https://docs.microsoft.com/pl-pl/powershell/) przejdź do folderu z kodem i wykonaj polecenie:
 
 ```pwsh=
 dotnet run
@@ -45,7 +45,7 @@ dotnet build
 
 ## Szczegółowy opis gry
 
-Gracz (po wyborze zestawu pytań) pojawia się w punkcie 0, 0 w proceduralnie wygenerowanym labiryncie. Może poruszać się za pomocą strzałek lub popularnego WSADu. Musi przedostać się na przeciwległy kraniec labiryntu. Cały labirynt usiany jest znakami zapytania, po wejściu na niego pojawia się monit z pytaniem i maksymalnie czterema odpowiedziami. Po poprawnej opowiedzi znak zapytania oraz monit znikają i można kontynuować grę. Po złej odpowiedzi gracz traci jedno życie, ale pytanie zostaje uznane za "zaliczone".
+Gracz (po wyborze zestawu pytań) pojawia się w punkcie (0, 0) w proceduralnie wygenerowanym labiryncie. Może poruszać się za pomocą strzałek lub popularnego WSADu. Musi przedostać się na przeciwległy kraniec labiryntu. Cały labirynt usiany jest znakami zapytania, po wejściu na niego pojawia się monit z pytaniem i maksymalnie czterema odpowiedziami. Po poprawnej opowiedzi znak zapytania oraz monit znikają i można kontynuować grę. Po złej odpowiedzi gracz traci jedno życie, ale pytanie zostaje uznane za "zaliczone".
 
 Zestaw pytań może zostać załadowany jako argument konsoli (nazwa pliku). Jeżeli nie podamy nazwy pliku z pytaniami program spróbuje załadować plik 'examples/set1.json' Format pliku to JSON, którego układ wygląda nastepująco [pytanie1, pytanie2, pytanie3, itd.]. Natomiast pytanie składa się z [Pytanie, [odp0, odp1, odp2, odp3], numer poprawnej odpowiedzi].
 
@@ -72,3 +72,15 @@ Klasa Question to okienko z pytaniem. Posiada pola tekstowe i cztery pyszciski, 
 Zestaw pytań znajduje się natomiast w klasie QuestionSet, klasa ta na początku programu parsuje Jsona z pytaniami i przechowuje pytania w specjalnej klasie QuestionPrototype. Klasa zajmuje się też losowaniem kolejnych pytań oraz podaje je klasie Game, która z kolei aktualizuje zawartość klasy Question.
 
 Istnieje jeszcze parę mniejszych klas takie jak EndWindow, jest to okienko z informacją o końcu gry (z porażką lub nie), jest też klasa Player, która wyświetla gracza oraz jego ilość żyć. Gdy zostanie 0 żyć to klasa wyśle sygnał do klasy Game. Zostaje jeszcze klasa finish, która jest po prostu kwadratem z teksturą.
+
+## Dalszy rozwój
+
+Po zakończeniu projektu planuję dalsze prace nad programem. Oprócz rozwoju samego kodu, zaplanowane są również następujące funkcjonalności:
+
+- Menu główne z wyborem pliku z pytaniami oraz rozmiarem labiryntu,
+- Menu ustawień i "Co nowego",
+- Moduł automatycznych aktualizacji.
+
+## Licencjonowanie
+
+Program wykresy będzie darmowym oprogramowaniem open-source na licencji [MIT](./LICENSE). Kod jest dostępny w publicznym repozytorium na GitHubie.
